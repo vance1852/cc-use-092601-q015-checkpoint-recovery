@@ -7,6 +7,7 @@
 - `src/compute_fabric/`：站点、通道、资源库存、预约、容量分配和情景分析；
 - `src/accelerator_lab/`：加速卡测点导入、排除复核、分析任务租约和准入决定；
 - `src/silicon_qualification/`：AI 加速芯片批次、测量、分析与质量审批；
+- `src/data_forge/`：数据加工任务断点恢复，含输入清单摘要、规则版本、分片依赖、租约领取、原子解锁、失败重试与人工处置；
 - `fixtures/`：离线验收使用的结构化协议与测点；
 - `tests/`：核心规则、错误边界、事务、API 和命令行验收测试。
 
@@ -34,6 +35,7 @@ python3 -m compileall -q src tests
 PYTHONPATH=src python3 -m compute_fabric.acceptance --workspace .
 PYTHONPATH=src python3 -m accelerator_lab.acceptance --workspace .
 PYTHONPATH=src python3 -m silicon_qualification.acceptance
+PYTHONPATH=src python3 -m data_forge.acceptance --workspace .
 ```
 
 这些命令使用临时 SQLite 数据库完成站点、资源、预约、分配、测点分析和芯片准入流程，不访问外部网络。
@@ -44,6 +46,7 @@ PYTHONPATH=src python3 -m silicon_qualification.acceptance
 PYTHONPATH=src python3 -m compute_fabric.api --database compute.sqlite3 --host 127.0.0.1 --port 8080
 PYTHONPATH=src python3 -m accelerator_lab.api --database lab.sqlite3 --host 127.0.0.1 --port 8081
 PYTHONPATH=src python3 -m silicon_qualification.api --database silicon.sqlite3 --host 127.0.0.1 --port 8082
+PYTHONPATH=src python3 -m data_forge.api --database forge.sqlite3 --host 127.0.0.1 --port 8083
 ```
 
 服务均提供 `GET /health`，其余接口使用 JSON。进程重启后可以继续查询 SQLite 中的业务状态和审计历史。

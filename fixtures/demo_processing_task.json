@@ -1,0 +1,56 @@
+{
+  "task_id": "demo-cleanse-v1",
+  "name": "训练语料清洗、切分与特征统计示例",
+  "rule_version": "cleanse-rules-2026.09",
+  "rule_params": {
+    "min_rows": 100,
+    "dedup": true,
+    "feature_bins": 16,
+    "encoding": "utf-8"
+  },
+  "retry_policy": {
+    "max_attempts": 2,
+    "retry_delay_seconds": 45,
+    "backoff_multiplier": 2.0
+  },
+  "manifest": [
+    {
+      "uri": "s3://corpus/raw/part-0001.jsonl",
+      "sha256": "a317d51ff24d47a9818837370870b55fb0e8043df2935704015f839a26454e44"
+    },
+    {
+      "uri": "s3://corpus/raw/part-0002.jsonl",
+      "sha256": "06d8addd97be2b1e0af2ae8945583370a40d3025271383a71dfbd80f1976b143"
+    },
+    {
+      "uri": "s3://corpus/raw/part-0003.jsonl",
+      "sha256": "d2a0a60dff47599be4efb6f604903581280684cd493e2b3fda1b5102e7fb273e"
+    },
+    {
+      "uri": "s3://corpus/lexicon/stopwords-v7.txt",
+      "sha256": "40428b71172e616407d9573608ace78cdb8298f8daa679c55b8cfe7f512ca2e5"
+    }
+  ],
+  "shards": [
+    {
+      "shard_key": "cleanse-a",
+      "inputs": ["s3://corpus/raw/part-0001.jsonl", "s3://corpus/lexicon/stopwords-v7.txt"]
+    },
+    {
+      "shard_key": "cleanse-b",
+      "inputs": ["s3://corpus/raw/part-0002.jsonl", "s3://corpus/lexicon/stopwords-v7.txt"]
+    },
+    {
+      "shard_key": "cleanse-c",
+      "inputs": ["s3://corpus/raw/part-0003.jsonl", "s3://corpus/lexicon/stopwords-v7.txt"]
+    },
+    {
+      "shard_key": "tokenize",
+      "depends_on": ["cleanse-a", "cleanse-b", "cleanse-c"]
+    },
+    {
+      "shard_key": "feature-stats",
+      "depends_on": ["tokenize"]
+    }
+  ]
+}
